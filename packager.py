@@ -7,8 +7,7 @@ def create_install_list_gz(dir):
     print("----tar.gz files------")
     os.chdir(f'{dir}/downloads/')
     for file_name in glob.glob('*.gz'):
-        with open(f'{dir}/package_gz_list.txt','a') as f:
-            working_dir = os.getcwd()
+        with open(f'{dir}/package_gz_list.txt', 'a') as f:
             f.write(f"extracted_packages/gz/{file_name}\n")
             print(f"extracted_packages/gz/{file_name}")
 
@@ -17,46 +16,43 @@ def create_install_list_whl(dir):
     print("----whl files------")
     os.chdir(f'{dir}/downloads/')
     for file_name in glob.glob('*.whl'):
-        if "py3" in file_name:
-            with open(f'{dir}/package_whl_list.txt','a') as f:
-                working_dir = os.getcwd()
-                f.write(f"extracted_packages/whl/{file_name}\n")
-                print(f"extracted_packages/whl/{file_name}")
+        #if "py3" in file_name:
+        with open(f'{dir}/package_whl_list.txt', 'a') as f:
+            f.write(f"extracted_packages/whl/{file_name}\n")
+            print(f"extracted_packages/whl/{file_name}")
 
 
 def package(dir):
     """ Packages tar.gz and whl files + create install list """
     # printing the list of all files to be zipped
-    print('files in downoads directory  will be zipped: ')
+    print('files in downloads directory  will be zipped: ')
     create_install_list_gz(dir)
     os.chdir(f'{dir}/downloads/')
     print('ZIPPING .gz files as python_gz_packages.zip')
-    with ZipFile(f'{dir}/python_gz_packages.zip','w') as zip:
+    with ZipFile(f'{dir}/python_gz_packages.zip', 'w') as zip:
         # writing each file one by one
         for file_name in glob.glob("*.gz"):
             zip.write(file_name)
     create_install_list_whl(dir)
     os.chdir(f'{dir}/downloads/')
     print('ZIPPING .whl files as python_whl_packages.zip')
-    with ZipFile(f'{dir}/python_whl_packages.zip','w') as zip:
+    with ZipFile(f'{dir}/python_whl_packages.zip', 'w') as zip:
         # writing each file one by one
         for file_name in glob.glob("*.whl"):
-            if "py3" in file_name:
-                zip.write(file_name)
+            zip.write(file_name)
     print("All files zipped successfully!")
 
 
 def install_packages_whl(dir):
     """ install whl packages """
     os.chdir(f'{dir}/extracted_packages/whl/')
-    os.system(f'python3.8 -m pip install *.whl')
+    os.system(f'python3 -m pip install *.whl')
 
 def install_packages_tar(dir):
     """ install tar.gz packages """
-    file_name = []
     os.chdir(f'{dir}/extracted_packages/gz/')
     print("im here")
-    with open(f'{dir}/package_gz_list.txt','r') as f:
+    with open(f'{dir}/package_gz_list.txt', 'r') as f:
         line = f.readline()
         cnt = 1
         while line:
@@ -65,27 +61,27 @@ def install_packages_tar(dir):
                 break
             print(f"Extracting {line}!")
             os.system(f'tar -xvzf {dir}/{line}')
-            new_dir = line.replace('.tar.gz\n','')
+            new_dir = line.replace('.tar.gz\n', '')
             if new_dir == '':
-                return 1 
+                return 1
             print(f"Installing {new_dir}")
             os.chdir(f'{dir}/{new_dir}')
-            os.system(f'python3.8 -m pip install .')
+            os.system(f'python3 -m pip install .')
             os.chdir(f'{dir}/extracted_packages/gz/')
             cnt += 1
-    print("DONE!!") 
+    print("DONE!!")
 
 
 def write_requirements(dir):
     """ write pip packages to requirements.txt """
-    os.system('python3.8 -m pip freeze > requirements.txt')
+    os.system('python3 -m pip freeze > requirements.txt')
 
 def download_packages(dir):
     """ download pip packages reading requirements.txt """
     print("creating downloads directory")
     os.system('mkdir downloads >/dev/null 2>&1')
     print("downloading packages")
-    os.system('python3.8 -m pip download -r requirements.txt -d ./downloads >/dev/null 2>&1')
+    os.system('python3 -m pip download -r requirements.txt -d ./downloads >/dev/null 2>&1')
     print("DONE. Please see requirements.txt for package details")
 
 def print_help():
@@ -100,16 +96,15 @@ def print_help():
                 -r list packages only
                 -u unzip "python_packages.zip"
                 -i unzip and install from "python_packages.zip" using package_list.txt
-                [IMPORTANT: MAKE SURE YOUR ARE USING PYTHON3.8]
+                [IMPORTANT: MAKE SURE YOUR ARE USING PYTHON3]
             ''')
-
     pass
 
 def unzip_gz_packages(dir):
     """ Unzip tar.gz packages """
     print("creating directory")
     os.system(f'mkdir {dir}/extracted_packages/gz >/dev/null 2>&1')
-    with ZipFile(f'{dir}/python_gz_packages.zip','r') as zipObj:
+    with ZipFile(f'{dir}/python_gz_packages.zip', 'r') as zipObj:
         zipObj.extractall(f'{dir}/extracted_packages/gz')
     print(f"Extracted in -TARGET_DIR={dir}/extracted_packages/gz")
 
@@ -117,7 +112,7 @@ def unzip_whl_packages(dir):
     """ Unzip whl packages """
     print("creating directory")
     os.system(f'mkdir {dir}/extracted_packages/whl >/dev/null 2>&1')
-    with ZipFile(f'{dir}/python_whl_packages.zip','r') as zipObj:
+    with ZipFile(f'{dir}/python_whl_packages.zip', 'r') as zipObj:
         zipObj.extractall(f'{dir}/extracted_packages/whl')
     print(f"Extracted in -TARGET_DIR={dir}/extracted_packages/whl")
 
@@ -125,7 +120,7 @@ def unzip_main(dir):
     """ Unzip main tar.gz file """
     print("creating directory")
     os.system(f'mkdir {dir}/extracted_packages >/dev/null 2>&1')
-    with ZipFile(f'{dir}/python_packages.zip','r') as zipObj:
+    with ZipFile(f'{dir}/python_packages.zip', 'r') as zipObj:
         zipObj.extractall(f'{dir}/extracted_packages')
     print(f"Extracted in -TARGET_DIR={dir}/extracted_packages")
 
@@ -163,7 +158,6 @@ def main():
         print("Packaging -TARGET_DIR=./downloads ")
         package(main_dir)
 
-
     elif sys.argv[position] == '-d':
         print("---list and download packages only---")
 
@@ -183,21 +177,21 @@ def main():
         unzip_gz_packages(main_dir)
         print("---unzip 'python_gz_packages.zip'---")
         unzip_whl_packages(main_dir)
-        
+
     elif sys.argv[position] == '-i':
         print("---unzip and install from 'python_packages.zip'")
         unzip_gz_packages(main_dir)
-          
+
         print("---unzip and install from 'python_packages.zip'")
         #unzip_packages(main_dir)
         unzip_whl_packages(main_dir)
-        
+
         print("Installing packages")
         install_packages_tar(main_dir)
-       
+
         print("Installing packages")
         install_packages_whl(main_dir)
-    
+
     elif sys.argv[position] == '-t':
         print("---TEST ")
         create_install_list_gz(main_dir)
@@ -205,9 +199,6 @@ def main():
 
     else:
         invalid()
-
-    
-
 
 if __name__ == '__main__':
     main()

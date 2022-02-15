@@ -28,7 +28,7 @@ required files in folder
 - package_whl_list.txt
 - package_gz_list.txt
 - python_tar_packages.zip
-- python_tar_packages.zip
+- python_whl_packages.zip
 - packager.py script
 
  run "python3.8 packager.py -i" to install the packages on the machine.
