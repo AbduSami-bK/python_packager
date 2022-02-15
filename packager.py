@@ -27,7 +27,7 @@ def create_install_list_whl(dir):
 def package(dir):
     """ Packages tar.gz and whl files + create install list """
     # printing the list of all files to be zipped
-    print('files in downoads directory  will be zipped: ')
+    print('files in downloads directory  will be zipped: ')
     create_install_list_gz(dir)
     os.chdir(f'{dir}/downloads/')
     print('ZIPPING .gz files as python_gz_packages.zip')
